@@ -6,13 +6,13 @@ from collections.abc import Mapping
 
 class Content(Mapping):
 
-    __delimeter = "^(?:-|\+){3}\s*$"
-    __regex = re.compile(__delimeter, re.MULTILINE)
+    __delimiter = "^(?:-|\+){3}\s*$"
+    __regex = re.compile(__delimiter, re.MULTILINE)
 
     @classmethod
     def load(cls, string):
         _, fm, content = cls.__regex.split(string, 2)
-        load(fm, Loader=FullLoader)
+        metadata = load(fm, Loader=FullLoader)
         return cls(metadata, content)
 
     def __init__(self, metadata, content):
@@ -25,20 +25,17 @@ class Content(Mapping):
 
     @property
     def type(self):
-        if self.data.get("type", False):
-            return self.data["type"]
-        else:
-            return None
+        return self.data["type"] if "type" in self.data else None
 
     @type.setter
     def type(self, value):
         self.data["type"] = value
 
-    def __getitem__(self, item):
-        return self.data[item]
+    def __getitem__(self, key):
+        return self.data[key]
 
     def __iter__(self):
-        self.data.items()
+        self.data.__iter__()
 
     def __len__(self):
         return len(self.data)
